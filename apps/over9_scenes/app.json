@@ -1,0 +1,38 @@
+{
+  "id": "over9_scenes",
+  "title": "OVER 9 Scenes",
+  "description": "Living pictures with a big clock: night over the mountains, northern lights, and a neon road that runs with the car",
+  "version": "1.0.0",
+  "vendor": "custom",
+  "loggingId": "OV12",
+  "iconGlyph": "O9",
+  "requires": {
+    "idrive7-renderd": "2.1.7",
+    "mgu-inputgate": "1.0.0"
+  },
+  "signals": {
+    "de.bmw.infotainment.vehicle.Vehicle2": {
+      "_optional": "the neon road's speed",
+      "statusCarSpeed2": "rs"
+    }
+  },
+  "screens": [
+    {
+      "name": "MAIN",
+      "kind": "canvas",
+      "title": "OVER 9 Scenes",
+      "buttons": [
+        ["BTN_NEXT", "Next"],
+        ["BTN_SETTINGS", "Settings"]
+      ]
+    }
+  ],
+  "settings": [
+    {"key": "scene", "label": "Scene", "type": "choice", "default": "night",
+     "options": [["night", "Night over the mountains"], ["aurora", "Northern lights"], ["road", "Neon road"]]},
+    {"key": "rotate", "label": "Change scene every", "type": "number", "unit": "min", "default": 0,
+     "steps": [0, 1, 5, 15], "labels": {"0": "Never"}},
+    {"key": "demo", "label": "Demo data", "type": "choice", "default": "off",
+     "options": [["auto", "Auto"], ["on", "Always"], ["off", "Never"]]}
+  ]
+}
