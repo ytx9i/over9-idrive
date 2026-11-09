@@ -2,7 +2,7 @@
 /**
  * OVER 9 Scenes - living pictures for the iDrive screen with a big clock: a night over the mountains (stars,
  * a moon, shooting stars), northern lights, and a neon road that runs as fast as the car does.
- * Tap the screen (or Next) for the next scene. Reads only the road speed.
+ * Speed and engine speed at the bottom. Tap the screen (or Next) for the next scene. Reads only.
  */
 const mgu = require('./kit/mgu');
 const G = require('./kit/gauges');
@@ -91,19 +91,36 @@ function road(cv, t, kmh) {
     }
 }
 
-function clock(cv, scene, kmh) {
+/** Speed and engine speed in a glass panel at the bottom, with a bar that turns red near the redline. */
+function gauges(cv, kmh, rpm, redline) {
+    const x = 520, y = 388, w = 560, h = 112, mid = x + w / 2;
+    cv.roundRect(x, y, w, h, 22, [0, 0, 0, 170]);
+    cv.fillRect(mid, y + 18, 2, h - 36, [255, 255, 255, 40]);
+    const sp = G.isNum(kmh) ? String(Math.round(kmh)) : '--';
+    const rp = G.isNum(rpm) ? String(Math.round(rpm / 50) * 50) : '--';
+    cv.text(sp, x + w / 4, y + 70, 64, [255, 255, 255, 240], { align: 'center', font: 'bold' });
+    cv.text('KM/H', x + w / 4, y + 98, 18, [255, 255, 255, 150], { align: 'center', font: 'bold', spacing: 3 });
+    const hot = G.isNum(rpm) && rpm >= redline * 0.85;
+    cv.text(rp, mid + w / 4, y + 70, 64, hot ? [255, 70, 60, 255] : [255, 255, 255, 240], { align: 'center', font: 'bold' });
+    cv.text('RPM', mid + w / 4, y + 98, 18, [255, 255, 255, 150], { align: 'center', font: 'bold', spacing: 3 });
+    // engine speed bar along the panel's foot
+    const f = G.isNum(rpm) ? Math.max(0, Math.min(1, rpm / (redline * 1.1))) : 0;
+    cv.fillRect(x + 22, y + h - 8, w - 44, 4, [255, 255, 255, 30]);
+    if (f > 0) cv.fillRect(x + 22, y + h - 8, (w - 44) * f, 4, hot ? [255, 60, 50, 255] : f > 0.6 ? [255, 190, 40, 255] : [80, 200, 255, 255]);
+}
+
+function clock(cv, scene) {
     const d = new Date(), hh = String(d.getHours()).padStart(2, '0'), mm = String(d.getMinutes()).padStart(2, '0');
     const x = scene === 'aurora' ? W / 2 : 260, align = 'center';
     const y = scene === 'road' ? 150 : 200;
     cv.text(hh + ':' + mm, x, y, 110, [255, 255, 255, 235], { align, font: 'light' });
     cv.text(DAYS[d.getDay()] + '  ' + d.getDate() + ' ' + MONTHS[d.getMonth()], x, y + 46, 28, [255, 255, 255, 170], { align, font: 'bold', spacing: 3 });
-    if (scene === 'road' && G.isNum(kmh)) cv.text(Math.round(kmh) + ' KM/H', x, y + 84, 24, [255, 230, 120, 220], { align, font: 'bold', spacing: 2 });
 }
 
 mgu.run({
     async start(ctx) {
         const { ui, settings, log } = ctx;
-        const car = new Car(ctx, ['speed']);
+        const car = new Car(ctx, ['speed', 'rpm']);
         let i = Math.max(0, SCENES.indexOf(settings.get('scene')));
         let since = Date.now();
         const next = () => { i = (i + 1) % SCENES.length; since = Date.now(); };
@@ -118,7 +135,8 @@ mgu.run({
             const scene = SCENES[i];
             const cv = ctx.canvas(W, H).clear([0, 0, 0, 255]);
             if (scene === 'night') night(cv, t); else if (scene === 'aurora') aurora(cv, t); else road(cv, t, d.speed);
-            clock(cv, scene, d.speed);
+            clock(cv, scene);
+            if (settings.get('gauges') !== false) gauges(cv, d.speed, d.rpm, Number(settings.get('redline')) || 6500);
             cv.text('OVER', W - 150, H - 22, 30, [255, 255, 255, 200], { align: 'right', font: 'bold', spacing: 2 });
             cv.text('9', W - 122, H - 22, 30, [230, 30, 40, 255], { align: 'right', font: 'bold' });
             G.frame(cv, th, ['OVER 9 SCENES'], 0, []);

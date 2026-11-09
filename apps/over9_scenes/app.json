@@ -1,8 +1,8 @@
 {
   "id": "over9_scenes",
   "title": "OVER 9 Scenes",
-  "description": "Living pictures with a big clock: night over the mountains, northern lights, and a neon road that runs with the car",
-  "version": "1.0.0",
+  "description": "Living pictures with a big clock, speed and RPM: night over the mountains, northern lights, and a neon road that runs with the car",
+  "version": "1.1.0",
   "vendor": "custom",
   "loggingId": "OV12",
   "iconGlyph": "O9",
@@ -11,8 +11,10 @@
     "mgu-inputgate": "1.0.0"
   },
   "signals": {
+    "de.bmw.infotainment.vehicle.CDS": {
+      "statusEngineSpeed2": "rs"
+    },
     "de.bmw.infotainment.vehicle.Vehicle2": {
-      "_optional": "the neon road's speed",
       "statusCarSpeed2": "rs"
     }
   },
@@ -22,17 +24,95 @@
       "kind": "canvas",
       "title": "OVER 9 Scenes",
       "buttons": [
-        ["BTN_NEXT", "Next"],
-        ["BTN_SETTINGS", "Settings"]
+        [
+          "BTN_NEXT",
+          "Next"
+        ],
+        [
+          "BTN_SETTINGS",
+          "Settings"
+        ]
       ]
     }
   ],
   "settings": [
-    {"key": "scene", "label": "Scene", "type": "choice", "default": "night",
-     "options": [["night", "Night over the mountains"], ["aurora", "Northern lights"], ["road", "Neon road"]]},
-    {"key": "rotate", "label": "Change scene every", "type": "number", "unit": "min", "default": 0,
-     "steps": [0, 1, 5, 15], "labels": {"0": "Never"}},
-    {"key": "demo", "label": "Demo data", "type": "choice", "default": "off",
-     "options": [["auto", "Auto"], ["on", "Always"], ["off", "Never"]]}
+    {
+      "key": "scene",
+      "label": "Scene",
+      "type": "choice",
+      "default": "night",
+      "options": [
+        [
+          "night",
+          "Night over the mountains"
+        ],
+        [
+          "aurora",
+          "Northern lights"
+        ],
+        [
+          "road",
+          "Neon road"
+        ]
+      ]
+    },
+    {
+      "key": "rotate",
+      "label": "Change scene every",
+      "type": "number",
+      "unit": "min",
+      "default": 0,
+      "steps": [
+        0,
+        1,
+        5,
+        15
+      ],
+      "labels": {
+        "0": "Never"
+      }
+    },
+    {
+      "key": "gauges",
+      "label": "Show speed and RPM",
+      "type": "bool",
+      "default": true
+    },
+    {
+      "key": "redline",
+      "label": "Redline",
+      "type": "number",
+      "unit": "rpm",
+      "default": 6500,
+      "steps": [
+        4500,
+        5000,
+        5500,
+        6000,
+        6500,
+        7000,
+        7500
+      ]
+    },
+    {
+      "key": "demo",
+      "label": "Demo data",
+      "type": "choice",
+      "default": "off",
+      "options": [
+        [
+          "auto",
+          "Auto"
+        ],
+        [
+          "on",
+          "Always"
+        ],
+        [
+          "off",
+          "Never"
+        ]
+      ]
+    }
   ]
 }

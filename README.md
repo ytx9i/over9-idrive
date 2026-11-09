@@ -65,6 +65,6 @@ Messages: `tools/gen_talk.py` (then `python3 tools/gen_talk.py`). Fonts: Cairo a
 
 ## OVER 9 Scenes
 
-صور متحركة حلوة ويا ساعة كبيرة: ليل فوق الجبال (نجوم وقمر وشهب)، وشفق قطبي، وطريق نيون يمشي بسرعة السيارة. تلمس الشاشة أو تضغط Next حتى تبدّل.
+صور متحركة حلوة ويا ساعة كبيرة والسرعة والدوران (RPM): ليل فوق الجبال (نجوم وقمر وشهب)، وشفق قطبي، وطريق نيون يمشي بسرعة السيارة. تلمس الشاشة أو تضغط Next حتى تبدّل.
 
 Living pictures with a big clock: night over the mountains, northern lights, a neon road that runs with the car.
