@@ -55,3 +55,10 @@ Not affiliated with BMW. Use at your own risk.
 
 A drag-strip start tree: reaction time in milliseconds, ranks and the five best times. Parked only.
 Arabic text: `python3 tools/gen_reaction.py`.
+
+## OVER 9 Talk
+
+السيارة يصير إلها وجه وتحچي وياك بالعربي أو الكوردي (بادينى) أو الإنگليزي، حسب سياقتك: زيت بارد ودوران عالي، سرعة، إشارة منسية، وقوف طويل، زحمة، حرارة عالية، الليل، سياقة نظيفة. يقرا بس من السيارة وما يغيّر شي.
+
+The car gets a face and comments on how it is driven, in Arabic, Kurdish (Badini) or English. Reads only.
+Messages: `tools/gen_talk.py` (then `python3 tools/gen_talk.py`). Fonts: Cairo and Noto Sans Arabic (OFL, `fonts/`).

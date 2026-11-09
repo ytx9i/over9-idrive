@@ -1,0 +1,47 @@
+{
+  "id": "over9_talk",
+  "title": "OVER 9 Talk",
+  "description": "The car gets a face and talks about how it is driven, in Arabic, Kurdish or English",
+  "version": "1.0.0",
+  "vendor": "custom",
+  "loggingId": "OV11",
+  "iconGlyph": "O9",
+  "requires": {
+    "idrive7-renderd": "2.1.7",
+    "mgu-inputgate": "1.0.0"
+  },
+  "signals": {
+    "de.bmw.infotainment.vehicle.CDS": {
+      "statusEngineSpeed2": "rs",
+      "statusEngineTemperature": "rs"
+    },
+    "de.bmw.infotainment.vehicle.Vehicle2": {
+      "statusCarSpeed2": "rs"
+    },
+    "de.bmw.body.Light": {
+      "_optional": "the turn signal message",
+      "StatusFunctionsIndicators": "s",
+      "StatusFunctionsIndicators2": "s"
+    },
+    "de.bmw.infotainment.vehicle.Vehicle": {
+      "_optional": "the night message",
+      "statusDayNightChangeOver": "rs"
+    }
+  },
+  "screens": [
+    {
+      "name": "MAIN",
+      "kind": "canvas",
+      "title": "OVER 9 Talk",
+      "buttons": [
+        ["BTN_SETTINGS", "Settings"]
+      ]
+    }
+  ],
+  "settings": [
+    {"key": "lang", "label": "Language", "type": "choice", "default": "ar",
+     "options": [["ar", "Arabic"], ["ku", "Kurdish (Badini)"], ["en", "English"]]},
+    {"key": "demo", "label": "Demo data", "type": "choice", "default": "off",
+     "options": [["auto", "Auto"], ["on", "Always"], ["off", "Never"]]}
+  ]
+}
