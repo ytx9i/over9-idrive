@@ -1,0 +1,30 @@
+{
+  "id": "over9",
+  "title": "OVER 9",
+  "description": "OVER 9 car programming, Duhok: contact details and QR codes for WhatsApp, Instagram and TikTok",
+  "version": "1.0.0",
+  "vendor": "custom",
+  "loggingId": "OV09",
+  "iconGlyph": "O9",
+  "requires": {
+    "idrive7-renderd": "2.1.7",
+    "mgu-inputgate": "1.0.0"
+  },
+  "signals": {},
+  "screens": [
+    {
+      "name": "MAIN",
+      "kind": "canvas",
+      "title": "OVER 9",
+      "buttons": [
+        ["BTN_SETTINGS", "Settings"]
+      ]
+    }
+  ],
+  "settings": [
+    {"key": "lang", "label": "Language", "type": "choice", "default": "both",
+     "options": [["both", "Arabic and English"], ["ar", "Arabic"], ["en", "English"]]},
+    {"key": "accent", "label": "Colour", "type": "choice", "default": "red",
+     "options": [["red", "Red"], ["blue", "Blue"], ["gold", "Gold"]]}
+  ]
+}
