@@ -1,0 +1,33 @@
+{
+  "id": "over9_reaction",
+  "title": "OVER 9 Reaction",
+  "description": "Drag-strip start tree: test your reaction time in milliseconds, with ranks and the five best times",
+  "version": "1.0.0",
+  "vendor": "custom",
+  "loggingId": "OV10",
+  "iconGlyph": "O9",
+  "requires": {
+    "idrive7-renderd": "2.1.7",
+    "mgu-inputgate": "1.0.0"
+  },
+  "signals": {
+    "de.bmw.infotainment.vehicle.Vehicle2": {
+      "_optional": "the parked check: the game then plays whatever the speed",
+      "statusCarSpeed2": "rs"
+    }
+  },
+  "screens": [
+    {
+      "name": "MAIN",
+      "kind": "canvas",
+      "title": "OVER 9 Reaction",
+      "buttons": [
+        ["BTN_GO", "Press"],
+        ["BTN_SETTINGS", "Settings"]
+      ]
+    }
+  ],
+  "settings": [
+    {"key": "parkedOnly", "label": "Only while parked", "type": "bool", "default": true}
+  ]
+}

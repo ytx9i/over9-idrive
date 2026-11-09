@@ -48,3 +48,10 @@ node kit/tools/preview.js dist/over9 out wait=3 --set lang=both
 - Cairo font (`fonts/`): SIL Open Font License 1.1 (`fonts/OFL-Cairo.txt`).
 
 Not affiliated with BMW. Use at your own risk.
+
+## OVER 9 Reaction
+
+اختبار ردة فعل مثل إشارات سباق الدراگ: اضغط حتى تبدي، 3 أصفر، وبعدها أخضر بوقت عشوائي، واضغط بأسرع وقت. إذا ضغطت قبل الأخضر تنحسب انطلاق خاطئ. يعرض الوقت بالملي ثانية، والترتيب، وأفضل 5 أوقات. يشتغل بس والسيارة واكفة.
+
+A drag-strip start tree: reaction time in milliseconds, ranks and the five best times. Parked only.
+Arabic text: `python3 tools/gen_reaction.py`.
