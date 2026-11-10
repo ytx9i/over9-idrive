@@ -1,6 +1,6 @@
 'use strict';
 /**
- * OVER 9 Scenes - living pictures for the iDrive screen with a big clock: a night over the mountains (stars,
+ * OVER 9 Relax - living pictures for the iDrive screen with a big clock: a night over the mountains (stars,
  * a moon, shooting stars), northern lights, and a neon road that runs as fast as the car does.
  * Speed and engine speed at the bottom. Tap the screen (or Next) for the next scene. Reads only.
  */
@@ -139,7 +139,7 @@ mgu.run({
             if (settings.get('gauges') !== false) gauges(cv, d.speed, d.rpm, Number(settings.get('redline')) || 6500);
             cv.text('OVER', W - 150, H - 22, 30, [255, 255, 255, 200], { align: 'right', font: 'bold', spacing: 2 });
             cv.text('9', W - 122, H - 22, 30, [230, 30, 40, 255], { align: 'right', font: 'bold' });
-            G.frame(cv, th, ['OVER 9 SCENES'], 0, []);
+            G.frame(cv, th, ['OVER 9 RELAX'], 0, []);
             await ui.image('MAIN_GFX', cv);
         }
         ctx.loop('MAIN', 30, render);

@@ -63,7 +63,7 @@ Arabic text: `python3 tools/gen_reaction.py`.
 The car gets a face and comments on how it is driven, in Arabic, Kurdish (Badini) or English. Reads only.
 Messages: `tools/gen_talk.py` (then `python3 tools/gen_talk.py`). Fonts: Cairo and Noto Sans Arabic (OFL, `fonts/`).
 
-## OVER 9 Scenes
+## OVER 9 Relax
 
 صور متحركة حلوة ويا ساعة كبيرة والسرعة والدوران (RPM): ليل فوق الجبال (نجوم وقمر وشهب)، وشفق قطبي، وطريق نيون يمشي بسرعة السيارة. تلمس الشاشة أو تضغط Next حتى تبدّل.
 
