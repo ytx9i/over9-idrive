@@ -24,7 +24,7 @@ Instagram and TikTok.
 
 ## تغيير المعلومات / Changing the details
 
-The unit's fonts have no Arabic, so every line of text is drawn beforehand into `apps/over9/assets.js`.
+The unit has no Arabic font and its GPU renderer shows no pixel pictures, so every line of text is drawn beforehand into a small font of whole lines (`tools/glyphs.py`, `kit/runtime/fonts/o9*.json`) and the QR codes are drawn as squares.
 
 1. عدّل `INFO` بأول `tools/gen_assets.py`.
 2. شغّل:

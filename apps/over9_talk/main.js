@@ -5,14 +5,12 @@
  * long, traffic, a hot engine, night falling, a smooth drive... each has its message and its face.
  *
  * Reads only: engine speed and temperatures, road speed, the turn signals, day / night. Writes nothing to
- * the car. The messages are drawn beforehand (tools/gen_talk.py -> assets.js), as the unit has no Arabic or
+ * the car. The messages are a font of whole lines (tools/gen_talk.py), as the unit has no Arabic or
  * Kurdish font; change them there.
  */
-const zlib = require('zlib');
 const mgu = require('./kit/mgu');
 const G = require('./kit/gauges');
 const Car = require('./kit/car');
-const { setImage } = require('./kit/record');
 const A = require('./assets');
 
 const W = 1600, H = 520;
@@ -21,22 +19,15 @@ const WHITE = [240, 240, 245, 255], DIM = [150, 150, 162, 255], ACCENT = [230, 3
 const SKIN = { happy: [255, 196, 40, 255], angry: [235, 70, 40, 255], cool: [90, 170, 255, 255] };
 const INK = [25, 20, 10, 255];
 
-// ---------------------------------------------------------------- pictures
-let nextId = 9300;
-const pics = Object.create(null);
-function picture(key, p) {
-    const rgb = zlib.inflateSync(Buffer.from(p.rgb, 'base64'));
-    const n = p.w * p.h, px = new Uint8Array(n * 4);
-    for (let i = 0, j = 0; i < n; i++, j += 3) { px[i * 4] = rgb[j]; px[i * 4 + 1] = rgb[j + 1]; px[i * 4 + 2] = rgb[j + 2]; px[i * 4 + 3] = 255; }
-    const id = nextId++;
-    setImage(id, p.w, p.h, px);
-    pics[key] = { id, w: p.w, h: p.h };
-}
-for (const k of Object.keys(A.msg)) picture(k, A.msg[k]);
-for (const k of Object.keys(A.label)) picture('l_' + k, A.label[k]);
-function put(cv, key, cx, cy) {
-    const p = pics[key];
-    if (p) cv.image(p.id, Math.round(cx - p.w / 2), Math.round(cy - p.h / 2), p.w, p.h);
+// ---------------------------------------------------------------- text
+// Each message is one glyph of a font made by tools/gen_talk.py (the renderer has no Arabic or Kurdish and
+// shows no pixel images).
+const GL = A.glyphs;
+function put(cv, key, cx, cy, colour, scale) {
+    const g = GL[key];
+    if (!g) return;
+    const k = scale || 1;
+    cv.text(String.fromCodePoint(g.cp), Math.round(cx - g.w * k / 2), Math.round(cy - g.h * k / 2), g.size * k, colour, { font: g.font, literal: true });
 }
 
 // ---------------------------------------------------------------- what each message looks like
@@ -206,7 +197,7 @@ mgu.run({
             const x0 = 520, w = 1040 / items.length;
             items.forEach((it, i) => {
                 const cx = x0 + w * i + w / 2;
-                put(cv, 'l_' + lang + '_' + it[0], cx, 426);
+                put(cv, lang + '_l_' + it[0], cx, 426, DIM);
                 cv.text(it[1], cx, 486, 40, WHITE, { align: 'center', font: 'bold' });
             });
         }
@@ -223,12 +214,8 @@ mgu.run({
             const bx = 480, by = 70, bw = 1090, bh = 300;
             cv.roundRect(bx, by, bw, bh, 36, BUBBLE);
             cv.convex ? cv.convex([[bx + 4, by + 170], [bx - 46, by + 210], [bx + 4, by + 220]], BUBBLE) : null;
-            const p = pics[lang + '_' + msg];
             const pop = Math.min(1, (now - msgAt) / 180);           // a new message pops in
-            if (p) {
-                const s = 0.85 + 0.15 * pop;
-                cv.image(p.id, Math.round(bx + bw / 2 - p.w * s / 2), Math.round(by + bh / 2 - p.h * s / 2), Math.round(p.w * s), Math.round(p.h * s));
-            }
+            put(cv, lang + '_' + msg, bx + bw / 2, by + bh / 2, WHITE, 0.85 + 0.15 * pop);
             cv.fillRect(bx + 40, by + bh - 6, 120, 6, ACCENT);
             stats(cv, lang, d);
             G.frame(cv, t, ['OVER 9 TALK'], 0, [d.demo && { text: 'DEMO' }]);

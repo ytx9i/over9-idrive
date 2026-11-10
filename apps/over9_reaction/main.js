@@ -5,14 +5,12 @@
  * Shows the time in milliseconds, a rank, and the five best times (kept in the app's data folder).
  *
  * Pressing: tap anywhere on the screen, or press the iDrive knob on the button. Plays only while the car
- * stands still (kit/parked). Arabic text is drawn beforehand (tools/gen_reaction.py -> assets.js).
+ * stands still (kit/parked). Arabic text is a font of whole lines (tools/gen_reaction.py).
  */
 const fs = require('fs');
 const path = require('path');
-const zlib = require('zlib');
 const mgu = require('./kit/mgu');
 const G = require('./kit/gauges');
-const { setImage } = require('./kit/record');
 const A = require('./assets');
 
 const W = 1600, H = 520;
@@ -21,25 +19,22 @@ const AMBER = [255, 176, 32, 255], GREEN = [40, 220, 90, 255], RED = [235, 45, 4
 const OFF = [40, 40, 46, 255], HOUSING = [22, 22, 27, 255];
 const WHITE = [240, 240, 245, 255], DIM = [150, 150, 162, 255];
 
-// ---------------------------------------------------------------- pictures
-let nextId = 9200;
-const pics = Object.create(null);
-function picture(key, p) {
-    const rgb = zlib.inflateSync(Buffer.from(p.rgb, 'base64'));
-    const n = p.w * p.h, px = new Uint8Array(n * 4);
-    for (let i = 0, j = 0; i < n; i++, j += 3) { px[i * 4] = rgb[j]; px[i * 4 + 1] = rgb[j + 1]; px[i * 4 + 2] = rgb[j + 2]; px[i * 4 + 3] = 255; }
-    const id = nextId++;
-    setImage(id, p.w, p.h, px);
-    pics[key] = { id, w: p.w, h: p.h };
-}
-for (const k of Object.keys(A.text)) picture(k, A.text[k]);
-picture('logo', A.logo);
-
+// ---------------------------------------------------------------- text
+// Each line is one glyph of a font made by tools/gen_reaction.py (the renderer has no Arabic and shows no
+// pixel images); the colour is chosen here.
+const GL = A.glyphs;
+const COLOUR = { title: WHITE, ready: AMBER, go: GREEN, false: RED, best: WHITE, record: AMBER, parked: AMBER,
+    r0: GREEN, r1: GREEN, r2: WHITE, r3: WHITE, r4: DIM, r5: RED };
 function put(cv, key, x, cy, align) {
-    const p = pics[key];
-    if (!p) return;
-    const left = align === 'right' ? x - p.w : align === 'center' ? x - p.w / 2 : x;
-    cv.image(p.id, Math.round(left), Math.round(cy - p.h / 2), p.w, p.h);
+    const g = GL[key];
+    if (!g) return;
+    const left = align === 'right' ? x - g.w : align === 'center' ? x - g.w / 2 : x;
+    cv.text(String.fromCodePoint(g.cp), Math.round(left), Math.round(cy - g.h / 2), g.size, COLOUR[key] || DIM, { font: g.font, literal: true });
+}
+function logo(cv, cx, cy) {
+    const o = GL.logo_over, n = GL.logo_9, gap = 12, w = o.w + gap + n.w, x = cx - w / 2, y = cy - o.h / 2;
+    cv.text(String.fromCodePoint(o.cp), x, y, o.size, WHITE, { font: o.font, literal: true });
+    cv.text(String.fromCodePoint(n.cp), x + o.w + gap, y + o.h - n.h, n.size, [230, 30, 40, 255], { font: n.font, literal: true });
 }
 
 // ---------------------------------------------------------------- game
@@ -132,7 +127,7 @@ mgu.run({
         function side(cv) {
             const x = 1200, r = 1560;
             cv.roundRect(x - 24, 60, r - x + 48, 440, 18, HOUSING);
-            put(cv, 'logo', (x + r) / 2, 104, 'center');
+            logo(cv, (x + r) / 2, 104);
             put(cv, 'best', r, 168, 'right');
             if (!best.length) { put(cv, 'none', r, 220, 'right'); return; }
             best.forEach((ms, i) => {

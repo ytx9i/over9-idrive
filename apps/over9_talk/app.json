@@ -2,7 +2,7 @@
   "id": "over9_talk",
   "title": "OVER 9 Talk",
   "description": "The car gets a face and talks about how it is driven, in Arabic, Kurdish or English",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "vendor": "custom",
   "loggingId": "OV11",
   "iconGlyph": "O9",
@@ -34,14 +34,53 @@
       "kind": "canvas",
       "title": "OVER 9 Talk",
       "buttons": [
-        ["BTN_SETTINGS", "Settings"]
+        [
+          "BTN_SETTINGS",
+          "Settings"
+        ]
       ]
     }
   ],
   "settings": [
-    {"key": "lang", "label": "Language", "type": "choice", "default": "ar",
-     "options": [["ar", "Arabic"], ["ku", "Kurdish (Badini)"], ["en", "English"]]},
-    {"key": "demo", "label": "Demo data", "type": "choice", "default": "off",
-     "options": [["auto", "Auto"], ["on", "Always"], ["off", "Never"]]}
+    {
+      "key": "lang",
+      "label": "Language",
+      "type": "choice",
+      "default": "ar",
+      "options": [
+        [
+          "ar",
+          "Arabic"
+        ],
+        [
+          "ku",
+          "Kurdish (Badini)"
+        ],
+        [
+          "en",
+          "English"
+        ]
+      ]
+    },
+    {
+      "key": "demo",
+      "label": "Demo data",
+      "type": "choice",
+      "default": "off",
+      "options": [
+        [
+          "auto",
+          "Auto"
+        ],
+        [
+          "on",
+          "Always"
+        ],
+        [
+          "off",
+          "Never"
+        ]
+      ]
+    }
   ]
 }

@@ -1,29 +1,17 @@
 #!/usr/bin/env python3
 """
 gen_talk.py - draws every message of OVER 9 Talk, in Arabic, Kurdish (Badini) and English, into
-apps/over9_talk/assets.js (the head unit has no Arabic or Kurdish font). Change a message below, then:
-
-    pip install pillow
-    python3 tools/gen_talk.py
-
-Arabic and Kurdish use Noto Sans Arabic (it has the Kurdish letters), English uses Cairo.
+apps/over9_talk/assets.js and the font kit/runtime/fonts/o9talk*.json (see glyphs.py). Change a message
+below, then: python3 tools/gen_talk.py
+Kurdish uses Noto Sans Arabic (it has the Kurdish letters), Arabic and English use Cairo.
 """
-import base64
-import json
 import os
-import zlib
+import sys
 
-from PIL import Image, ImageDraw, ImageFont
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from glyphs import ROOT, bake, line, write_js  # noqa: E402
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'apps', 'over9_talk', 'assets.js')
-NOTO = os.path.join(ROOT, 'fonts', 'NotoSansArabic.ttf')
-CAIRO = os.path.join(ROOT, 'fonts', 'Cairo.ttf')
-
-BUBBLE = (30, 30, 37)        # the speech bubble's colour: messages are drawn on it
-BG = (10, 10, 13)
-WHITE = (240, 240, 245)
-DIM = (150, 150, 162)
 MAX_W = 820                  # a message wider than this wraps
 
 # ---------------------------------------------------------------- the messages: [Arabic, Kurdish (Badini), English]
@@ -54,62 +42,17 @@ LABELS = {
 LANGS = ['ar', 'ku', 'en']
 
 
-def font(path, size, weight):
-    f = ImageFont.truetype(path, size, layout_engine=ImageFont.Layout.RAQM)
-    axes = f.get_variation_axes()
-    f.set_variation_by_axes([weight if a['name'] in (b'Weight', b'wght') else a['default'] for a in axes])
-    return f
-
-
-def wrap(text, f, direction):
-    words, lines, cur = text.split(' '), [], ''
-    for w in words:
-        t = (cur + ' ' + w).strip()
-        if cur and f.getlength(t, direction=direction) > MAX_W:
-            lines.append(cur)
-            cur = w
-        else:
-            cur = t
-    lines.append(cur)
-    return lines
-
-
-def draw(text, lang, size, weight, color, bg):
-    path = CAIRO if lang == 'en' else NOTO
-    direction = 'ltr' if lang == 'en' else 'rtl'
-    f = font(path, size, weight)
-    lines = wrap(text, f, direction)
-    asc, desc = f.getmetrics()
-    lh = int((asc + desc) * 1.05)
-    w = int(max(f.getlength(l, direction=direction) for l in lines)) + 16
-    h = lh * len(lines) + 8
-    im = Image.new('RGB', (w, h), bg)
-    d = ImageDraw.Draw(im)
-    for i, l in enumerate(lines):
-        lw = f.getlength(l, direction=direction)
-        d.text(((w - lw) / 2, 4 + i * lh), l, font=f, fill=color, direction=direction)
-    return im
-
-
-def pack(im):
-    return {'w': im.width, 'h': im.height, 'rgb': base64.b64encode(zlib.compress(im.tobytes(), 9)).decode()}
-
-
 def main():
-    out = {'msg': {}, 'label': {}}
+    items = {}
     for k, tr in MESSAGES.items():
         for i, lang in enumerate(LANGS):
-            out['msg'][lang + '_' + k] = pack(draw(tr[i], lang, 46, 800, WHITE, BUBBLE))
+            items[lang + '_' + k] = line(tr[i], 46, 800, max_w=MAX_W)
     for k, tr in LABELS.items():
         for i, lang in enumerate(LANGS):
-            out['label'][lang + '_' + k] = pack(draw(tr[i], lang, 24, 700, DIM, BG))
-    with open(OUT, 'w', encoding='utf-8') as fh:
-        fh.write("'use strict';\n// Made by tools/gen_talk.py - do not edit, run it again instead.\n")
-        fh.write('module.exports = ' + json.dumps(out, separators=(',', ':')) + ';\n')
-    print('%s: %d KB' % (OUT, os.path.getsize(OUT) // 1024))
-    widest = max(out['msg'].items(), key=lambda kv: kv[1]['w'])
-    tallest = max(out['msg'].items(), key=lambda kv: kv[1]['h'])
-    print('widest', widest[0], widest[1]['w'], '| tallest', tallest[0], tallest[1]['h'])
+            items[lang + '_l_' + k] = line(tr[i], 24, 700)
+    glyphs = bake('o9talk', items)
+    write_js(OUT, {'glyphs': glyphs}, 'tools/gen_talk.py')
+    print('%s: %d KB, fonts %s' % (OUT, os.path.getsize(OUT) // 1024, sorted({g['font'] for g in glyphs.values()})))
 
 
 if __name__ == '__main__':
