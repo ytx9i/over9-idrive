@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-gen_assets.py - the OVER 9 card's text (Arabic and English) and QR codes -> apps/over9/assets.js and the
+gen_assets.py - the OVER 9 card's text (Arabic and English) and QR codes (WhatsApp, Instagram, TikTok, Snapchat) -> apps/over9/assets.js and the
 font kit/runtime/fonts/o9card*.json (see glyphs.py for why text is a font). Edit INFO, then:
 
     pip install pillow segno
@@ -28,6 +28,7 @@ INFO = {
     'whatsapp': '9647502786722',      # international, no + or spaces
     'instagram': 'f6sr',
     'tiktok': 'iamover9',
+    'snapchat': 'ove_r9',
 }
 
 
@@ -50,8 +51,10 @@ def main():
         'en_wa': ('WhatsApp', 28, 800), 'ar_wa': ('واتساب', 28, 800),
         'en_ig': ('Instagram', 28, 800), 'ar_ig': ('انستغرام', 28, 800),
         'en_tt': ('TikTok', 28, 800), 'ar_tt': ('تيك توك', 28, 800),
+        'en_sc': ('Snapchat', 28, 800), 'ar_sc': ('سناب شات', 28, 800),
         'h_wa': (I['phone'], 24, 600), 'h_ig': ('@' + I['instagram'], 24, 600), 'h_tt': ('@' + I['tiktok'], 24, 600),
-        'en_scan': ('Scan with your phone camera', 19, 400), 'ar_scan': ('امسح الرمز بكاميرا الموبايل', 20, 500),
+        'h_sc': ('@' + I['snapchat'], 24, 600),
+        'en_scan': ('Scan with your camera', 19, 400), 'ar_scan': ('امسح بالكاميرا', 20, 500),
         'logo_over': ('OVER', 150, 1000), 'logo_9': ('9', 150, 1000),
     }
     glyphs = bake('o9card', {k: line(*v) for k, v in texts.items()})
@@ -61,6 +64,7 @@ def main():
             'wa': qr('https://wa.me/' + I['whatsapp']),
             'ig': qr('https://instagram.com/' + I['instagram']),
             'tt': qr('https://www.tiktok.com/@' + I['tiktok']),
+            'sc': qr('https://www.snapchat.com/add/' + I['snapchat']),
         },
     }, 'tools/gen_assets.py')
     print('%s: %d KB' % (OUT, os.path.getsize(OUT) // 1024))

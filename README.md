@@ -3,7 +3,7 @@
 بطاقة ورشة **OVER 9** على شاشة iDrive 7 (MGU): الاسم، الشغل، المدينة، رقم التلفون، و QR للواتساب والانستغرام والتيك توك الزبون يسكانه بكاميرة موبايله.
 
 The OVER 9 workshop card on the BMW iDrive 7 (MGU) screen: name, service, city, phone and QR codes for WhatsApp,
-Instagram and TikTok.
+Instagram, TikTok and Snapchat.
 
 ![OVER 9](docs/screen_both.png)
 

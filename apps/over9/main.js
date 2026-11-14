@@ -1,7 +1,7 @@
 'use strict';
 /**
  * OVER 9 - the workshop's card on the iDrive screen: name, what we do, where, the phone number,
- * and QR codes a customer scans with their phone (WhatsApp, Instagram, TikTok).
+ * and QR codes a customer scans with their phone (WhatsApp, Instagram, TikTok, Snapchat).
  *
  * The head unit has no Arabic font, so all text is drawn beforehand into a font of whole lines
  * (tools/gen_assets.py); this file only lays it out. Nothing is read from the car.
@@ -18,7 +18,7 @@ const C = { bg: [10, 10, 13, 255], card: [22, 22, 27, 255], accents: { red: [230
 // shows no pixel images), and the QR codes are drawn as rectangles, so all of it is drawn natively.
 const GL = A.glyphs;
 const WHITE = [240, 240, 245, 255], DIM = [150, 150, 162, 255];
-const COLOUR = { phone: WHITE, en_job: WHITE, ar_job: WHITE, en_name: WHITE, ar_name: WHITE, en_wa: WHITE, ar_wa: WHITE, en_ig: WHITE, ar_ig: WHITE, en_tt: WHITE, ar_tt: WHITE };
+const COLOUR = { phone: WHITE, en_job: WHITE, ar_job: WHITE, en_name: WHITE, ar_name: WHITE, en_wa: WHITE, ar_wa: WHITE, en_ig: WHITE, ar_ig: WHITE, en_tt: WHITE, ar_tt: WHITE, en_sc: WHITE, ar_sc: WHITE };
 
 /** Draw text `key` at x (left, right or centre per align) with its middle at cy. Returns its width. */
 function put(cv, key, x, cy, align, colour) {
@@ -30,7 +30,7 @@ function put(cv, key, x, cy, align, colour) {
 }
 
 /** A QR code `size` px wide (whole modules, white quiet zone) centred on cx with its top at y. */
-const QR_SIZE = 236;
+const QR_SIZE = 196;
 function qrDraw(cv, q, cx, y) {
     const quiet = 3, mods = q.n + quiet * 2, m = Math.max(1, Math.floor(QR_SIZE / mods)), s = mods * m;
     const x0 = Math.round(cx - s / 2);
@@ -49,9 +49,9 @@ function qrDraw(cv, q, cx, y) {
 
 // ---------------------------------------------------------------- layout
 const TOP = 56, BOT = 500;
-const L = { x: 24, w: 600 };                         // the card with the name
+const L = { x: 24, w: 560 };                         // the card with the name
 const R = { x: L.x + L.w + 24, w: 1576 - (L.x + L.w + 24) };
-const QW = Math.floor((R.w - 48) / 3);               // one QR card
+const QW = Math.floor((R.w - 72) / 4);               // one QR card
 
 function card(cv, x, y, w, h, accent) {
     cv.roundRect(x, y, w, h, 14, C.card);
@@ -89,15 +89,16 @@ function drawMain(cv, lang, accentName) {
     put(cv, 'phone', lang === 'ar' ? x1 : x0, y, lang === 'ar' ? 'right' : 'left');
 
     // QR cards
-    [['wa', 'en_wa', 'ar_wa', 'h_wa'], ['ig', 'en_ig', 'ar_ig', 'h_ig'], ['tt', 'en_tt', 'ar_tt', 'h_tt']].forEach((q, i) => {
+    [['wa', 'en_wa', 'ar_wa', 'h_wa'], ['ig', 'en_ig', 'ar_ig', 'h_ig'], ['tt', 'en_tt', 'ar_tt', 'h_tt'], ['sc', 'en_sc', 'ar_sc', 'h_sc']].forEach((q, i) => {
         const cx0 = R.x + i * (QW + 24), mid = cx0 + QW / 2;
         card(cv, cx0, TOP, QW, BOT - TOP);
         cv.fillRect(cx0 + 18, TOP, QW - 36, 4, accent);
-        const ly = TOP + 42;
-        if (lang === 'both') { put(cv, q[1], cx0 + 14, ly, 'left'); put(cv, q[2], cx0 + QW - 14, ly, 'right'); }
-        else put(cv, lang === 'ar' ? q[2] : q[1], mid, ly, 'center');
-        const qs = qrDraw(cv, A.qr[q[0]], mid, TOP + 82);
-        const hy = TOP + 82 + qs + 34;
+        // four cards are too narrow for both names on one line: English above Arabic
+        const both = lang === 'both', qy = TOP + (both ? 96 : 82);
+        if (both) { put(cv, q[1], mid, TOP + 34, 'center'); put(cv, q[2], mid, TOP + 66, 'center'); }
+        else put(cv, lang === 'ar' ? q[2] : q[1], mid, TOP + 42, 'center');
+        const qs = qrDraw(cv, A.qr[q[0]], mid, qy);
+        const hy = qy + qs + 34;
         put(cv, q[3], mid, hy, 'center');
         if (lang === 'both') { put(cv, 'en_scan', mid, hy + 40, 'center'); put(cv, 'ar_scan', mid, hy + 70, 'center'); }
         else put(cv, lang === 'ar' ? 'ar_scan' : 'en_scan', mid, hy + 46, 'center');
